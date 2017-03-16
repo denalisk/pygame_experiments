@@ -3,70 +3,72 @@ from pygame.locals import *
 import random, math, sys
 pygame.init()
 
-Surface = pygame.display.set_mode((800,600))
+# Easy access variables to adjust player traits
+PlayerSize = 20;
+PlayerSpeed = 5.0;
+WindowSize = 1000;
 
-Circles = []
-Colliders = []
-class Circle:
+
+class Player:
     def __init__(self):
-##        self.radius = int(random.random()*50) + 1
-        self.radius = 20
-        self.x = random.randint(self.radius, 800-self.radius)
-        self.y = random.randint(self.radius, 600-self.radius)
-        self.speedx = 0.5*(random.random()+1.0)
-        self.speedy = 0.5*(random.random()+1.0)
-        self.colliding = False;
-##        self.mass = math.sqrt(self.radius)
-for x in range(20):
-    Circles.append(Circle())
+        self.size = PlayerSize;
+        self.speed = PlayerSpeed;
+        self.vector = [0,0];
+        self.color = (188, 188, 33);
+        self.x = WindowSize/2.0;
+        self.y = WindowSize/2.0;
+        self.axes = {'x': self.x, 'y': self.y, '-x': self.x, '-y': self.y};
 
-def CircleCollide(ArrayOfCollisions):
-    for Collision in ArrayOfCollisions:
-        hold1x = Collision[0].speedx;
-        hold1y = Collision[0].speedy;
-        Collision[0].speedx = Collision[1].speedx;
-        Collision[0].speedy = Collision[1].speedy;
-        # C2.speedx = hold1x;
-        # C2.speedy = hold1y;
-        Collision[1].speedx = hold1x
-        Collision[1].speedy = hold1y
-        Collision[1].colliding = False;
-        Collision[0].colliding = False;
-    ArrayOfCollisions = []
-# All this needs to work is that the circles upon collision get removed from a collision table, because the double for loop is finding them once, swapping their velocity vectors, and finding them again, and swapping back. If you made a unique "collision" list, that checked for duplicates, you could add them to that and then loop through the collision list to assign new V vectors
+    def move(self):
+        self.x += self.vector[0] * self.speed;
+        self.y += self.vector[1] * self.speed;
+        self.vector = [0,0];
+        self.speed = PlayerSpeed;
 
-def Move():
-    for Circle in Circles:
-        Circle.x += Circle.speedx
-        Circle.y += Circle.speedy
-def CollisionDetect():
-    for Circle in Circles:
-        if Circle.x < Circle.radius or Circle.x > 800-Circle.radius:    Circle.speedx *= -1
-        if Circle.y < Circle.radius or Circle.y > 600-Circle.radius:    Circle.speedy *= -1
-    for Circle in Circles:
-        for Circle2 in Circles:
-            if Circle != Circle2:
-                if math.sqrt(  ((Circle.x-Circle2.x)**2)  +  ((Circle.y-Circle2.y)**2)  ) <= (Circle.radius+Circle2.radius):
-                    if Circle.colliding == False:
-                        Circle.colliding = True;
-                        Circle2.colliding = True;
-                        Colliders.append([Circle, Circle2]);
-    CircleCollide(Colliders);
+    def update(self, gameScreen):
+        pygame.draw.circle(gameScreen, (self.color), (int(self.x), int(self.y)), self.size);
 
-def Draw():
-    Surface.fill((25,0,0))
-    for Circle in Circles:
-        pygame.draw.circle(Surface,(0,0,150),(int(Circle.x),int(600-Circle.y)),Circle.radius)
-    pygame.display.flip()
-def GetInput():
-    keystate = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type == QUIT or keystate[K_ESCAPE]:
-            pygame.quit(); sys.exit()
+class Game(Player):
+    def __init__(self, Player):
+        self.color = (0,0,0);
+        self.window = pygame.display.set_mode((WindowSize, WindowSize));
+        self.currentPlayer = Player;
+
+    def update(self):
+        self.window.fill(self.color);
+        self.currentPlayer.update(self.window);
+        pygame.display.flip();
+
+    def process_input(self):
+        KeyState = pygame.key.get_pressed();
+        if KeyState[pygame.K_DOWN]:
+            self.currentPlayer.vector[1] += 1;
+        if KeyState[pygame.K_UP]:
+            self.currentPlayer.vector[1] += -1;
+        if KeyState[pygame.K_RIGHT]:
+            self.currentPlayer.vector[0] += 1;
+        if KeyState[pygame.K_LEFT]:
+            self.currentPlayer.vector[0] += -1;
+        if KeyState[pygame.K_SPACE]:
+            self.currentPlayer.speed  *= 2;
+            print("BOOOOOOOOOOOST");
+        self.currentPlayer.move();
+        for event in pygame.event.get():
+            if event.type == QUIT or KeyState[pygame.K_ESCAPE]:
+                print("over and out!");
+                pygame.quit(); sys.exit();
+
+
 def main():
-    while True:
-        GetInput()
-        Move()
-        CollisionDetect()
-        Draw()
-if __name__ == '__main__': main()
+    newPlayer = Player();
+    newGame = Game(newPlayer);
+    playing = True;
+    counter = 1;
+    while playing:
+        newGame.process_input();
+        newGame.update();
+        if counter % 40 == 0:
+            print("tick " + str(counter));
+        counter += 1;
+
+if __name__ == '__main__': main();

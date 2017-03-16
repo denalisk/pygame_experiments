@@ -1,3 +1,9 @@
 http://brysonpayne.com/2015/01/10/setting-up-pygame-on-a-mac/
 
 https://bitbucket.org/pygame/pygame/overview
+
+
+what do I want to build:
+
+Make a small circle that I can move around
+Generate projectiles towards the mouse pointer on click, from the circle

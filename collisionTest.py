@@ -74,7 +74,7 @@ def CollisionDetect():
 def Draw():
     Surface.fill((25,0,0))
     for Circle in Circles:
-        pygame.draw.circle(Surface,(0,0,150),(int(Circle.x),int(600-Circle.y)),Circle.radius)
+        pygame.draw.circle(Surface,(0,0,150),(int(Circle.x),int(Circle.y)),Circle.radius)
     pygame.display.flip()
 def GetInput():
     keystate = pygame.key.get_pressed()
