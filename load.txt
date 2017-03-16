@@ -6,4 +6,11 @@ https://bitbucket.org/pygame/pygame/overview
 what do I want to build:
 
 Make a small circle that I can move around
+
+$$ Next Steps:
 Generate projectiles towards the mouse pointer on click, from the circle
+-make a projectile class
+  -maybe do some general refactoring?
+  -instantiate projectiles with a velocity vector, shoot them away from the player towards a click point
+
+  
