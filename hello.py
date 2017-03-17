@@ -5,10 +5,11 @@ pygame.init()
 
 # Easy access variables to adjust player traits
 PlayerSize = 20;
-PlayerSpeed = 5.0;
+PlayerSpeed = 0.35;
 WindowSize = 1000;
 ProctileSpeed = PlayerSpeed * 5;
 ProctileSize = PlayerSize/2.0;
+BoostFactor = 3;
 
 
 class Player:
@@ -39,7 +40,8 @@ class Player:
         if currentKeyState[pygame.K_LEFT]:
             self.vector[0] += -1;
         if currentKeyState[pygame.K_SPACE]:
-            self.speed  *= 2;
+            print("pressed space");
+            self.speed  *= BoostFactor;
         self.move();
 
     def update(self, gameScreen):
@@ -118,7 +120,7 @@ def main():
     while playing:
         newGame.process_input();
         newGame.update();
-        if counter % 40 == 0:
+        if counter % 1000 == 0:
             print("tick " + str(counter));
         counter += 1;
 
